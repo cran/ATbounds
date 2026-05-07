@@ -1,7 +1,7 @@
 ---
 title: "ATbounds: An R Vignette"
 author: "Sokbae Lee and Martin Weidner"
-abstract: ATbounds is an R package that provides estimation and inference methods for bounding average treatment effects (on the treated) that are valid under an unconfoundedness assumption. The bounds are designed to be robust in challenging situations, for example, when the the conditioning variables take on a large number of different values in the observed sample, or when the overlap condition is violated. This robustness is achieved by only using limited "pooling" of information across observations.    
+abstract: ATbounds is an R package that provides estimation and inference methods for bounding average treatment effects (on the treated) that are valid under an unconfoundedness assumption. The bounds are designed to be robust in challenging situations, for example, when the conditioning variables take on a large number of different values in the observed sample, or when the overlap condition is violated. This robustness is achieved by only using limited "pooling" of information across observations.
 output: rmarkdown::pdf_document
 bibliography: refs.bib 
 vignette: >
@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-__ATbounds__ is an R package that provides estimation and inference methods for bounding average treatment effects (on the treated) that are valid under an unconfoundedness assumption. The bounds are designed to be robust in challenging situations, for example, when the the conditioning variables take on a large number of different values in the observed sample, or when the overlap condition is violated. This robustness is achieved by only using limited "pooling" of information across observations. Namely, the bounds are constructed as sample averages over functions of the observed outcomes such that the contribution of each outcome only depends on the treatment status of a limited number of observations. No information pooling across observations leads to so-called "Manski bounds" [@manski1989anatomy; @manski1990nonparametric], while unlimited information pooling leads to standard inverse propensity score weighting. The ATbounds package provides inference methods for exploring the intermediate range between these two extremes.
+__ATbounds__ is an R package that provides estimation and inference methods for bounding average treatment effects (on the treated) that are valid under an unconfoundedness assumption. The bounds are designed to be robust in challenging situations, for example, when the conditioning variables take on a large number of different values in the observed sample, or when the overlap condition is violated. This robustness is achieved by only using limited "pooling" of information across observations. Namely, the bounds are constructed as sample averages over functions of the observed outcomes such that the contribution of each outcome only depends on the treatment status of a limited number of observations. No information pooling across observations leads to so-called "Manski bounds" [@manski1989anatomy; @manski1990nonparametric], while unlimited information pooling leads to standard inverse propensity score weighting. The ATbounds package provides inference methods for exploring the intermediate range between these two extremes.
 
-The methodology used in the ATbounds package is described in detail in Lee and Weidner (2021), "Bounding Treatment Effects by Pooling Limited Information across Observations," "Bounding Treatment Effects by Pooling Limited Information across Observations," available at <https://arxiv.org/abs/2111.05243>.
+The methodology used in the ATbounds package is described in detail in Lee and Weidner, "Bounding Treatment Effects by Pooling Limited Information across Observations," forthcoming at the *Journal of Econometrics* and available at <https://arxiv.org/abs/2111.05243>.
 
 We begin by calling the ATbounds package.
 
@@ -34,12 +34,17 @@ library(ATbounds)
 To illustrate the usefulness of the package, we first use the well-known 
 @LaLonde-AER dataset available on Rajeev Dehejia's web page 
 at <http://users.nber.org/~rdehejia/nswdata2.html>.
+The code in this case study is displayed but not evaluated during package checks because it downloads data from an external website. The companion replication repository contains scripts for reproducing these results.
+
+```{r nsw-eval-options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE, purl = FALSE)
+```
 
 ## LaLonde's Experimental Sample 
 
-We fist look at LaLonde's original experimental sample. 
+We first look at LaLonde's original experimental sample.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   nsw_treated <- read.table("http://users.nber.org/~rdehejia/data/nsw_treated.txt")
   colnames(nsw_treated) <- c("treat","age","edu","black","hispanic",
                            "married","nodegree","RE75","RE78")
@@ -52,7 +57,7 @@ We fist look at LaLonde's original experimental sample.
 
 The outcome variable is `RE78` (earnings in 1978). The binary treatment indicator is `treat` (1 if treated, 0 if not treated). We now combine the treatment and control samples and define the variables.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   nsw <- rbind(nsw_treated,nsw_control)
   attach(nsw)
   D <- treat  
@@ -63,20 +68,20 @@ In this vignette, we define the outcome to be whether employed in 1978 (that is,
 
 The LaLonde dataset is from the National Supported Work Demonstration (NSW), which is a randomized controlled temporary employment program. In view of that, we set the reference propensity score to be independent of covariates. 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   rps <- rep(mean(D),length(D))  
 ```
 
 The average treatment effect is obtained by 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   ate_nsw <- mean(D*Y)/mean(D)-mean((1-D)*Y)/mean(1-D)
   print(ate_nsw)
 ```
 
 Alternatively, we run simple regression
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   model <- lm(Y ~ D)
   summary(model)
   confint(model)
@@ -88,7 +93,7 @@ The 95% confidence interval $[0.01,0.14]$ is rather wide but excludes zero.
 
 @DehejiaWahba-JASA and @DehejiaWahba-RESTAT extract a further subset of LaLonde's NSW experimental data to obtain a subset containing information on RE74 (earnings in 1974). 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   detach(nsw)
   nswre_treated <- read.table("http://users.nber.org/~rdehejia/data/nswre74_treated.txt")
   colnames(nswre_treated) <- c("treat","age","edu","black","hispanic",
@@ -116,24 +121,24 @@ The covariates are as follows:
 * `RE75`: earnings in 1975. 
 
 If we assume that the Dehejia-Wahba sample still preserves initial randomization, we can
-set the reference propensity score to be independent of covariates. However, it may not be the case and therefore, our approach can provide a robust method to check whether the Dehejia-Wahba sample can be viewed as  as a random sample from a randomized controlled experiment.
+set the reference propensity score to be independent of covariates. However, it may not be the case and therefore, our approach can provide a robust method to check whether the Dehejia-Wahba sample can be viewed as a random sample from a randomized controlled experiment.
 
-We first define the the reference propensity score.
+We first define the reference propensity score.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   rps <- rep(mean(D),length(D))  
 ```
 
 Using this reference propensity score, the average treatment effect is obtained by 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   ate_nswre <- mean(D*Y)/mean(D)-mean((1-D)*Y)/mean(1-D)
   print(ate_nswre)
 ```
 
 Alternatively, we run simple regression
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   model <- lm(Y ~ D)
   summary(model)
   confint(model)
@@ -145,7 +150,7 @@ The resulting 95% confidence interval $[0.02,0.20]$ is wide but again excludes z
 
 We now introduce our bounds on the average treatment effect (ATE). 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   bns_nsw <- atebounds(Y, D, X, rps)
 ```
 
@@ -165,7 +170,7 @@ The clusters are constructed via hierarchical, agglomerative clustering with com
 
 We show the summary results saved in `bns_nsw`.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   summary(bns_nsw)
 ```
 
@@ -179,19 +184,19 @@ We therefore use the method in @stoye2020 to obtain a valid confidence interval 
 The 95% confidence interval $[-0.01,0.19]$ obtained here is similar to the previous interval $[0.02,0.20]$, which was obtained under the assumption that the Dehejia-Wahba sample is a random sample from NSW. This suggests that first, there is no evidence against violation of the random sampling assumption in the Dehejia-Wahba sample and second, our inference method does not suffer from unduly enlargement of the confidence interval to achieve robustness, although a null effect is now included in our confidence interval.
 
 With $Q=2$, the bounds for ATE are
-```{r}
+```{r, eval=FALSE, purl=FALSE}
 summary(atebounds(Y, D, X, rps, Q = 2))
 ```
 
 With $Q=4$, the bounds for ATE are
-```{r}
+```{r, eval=FALSE, purl=FALSE}
 summary(atebounds(Y, D, X, rps, Q = 4))
 ```
 
 
 Recall that the point estimate of ATE under the random sampling assumption was
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
 print(ate_nswre)
 ```
 
@@ -200,7 +205,7 @@ Thus, the ATE estimate based on the simple mean difference well within the 95% c
 Recall that covariates $X$ include non-discrete variables: `RE74` and `RE75`. As a default option, `atebounds` chooses the number of hierarchical clusters to be `n_hc = ceiling(length(Y)/10)`.
 To check sensitivity to `n_hc`, we now run the following:
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
 summary(atebounds(Y, D, X, rps))
 summary(atebounds(Y, D, X, rps, n_hc = ceiling(length(Y)/5)))
 summary(atebounds(Y, D, X, rps, n_hc = ceiling(length(Y)/20)))
@@ -210,7 +215,7 @@ It can be seen that the alternative estimation result is more similar to the def
 
 Finally, to see what is saved in `bns_nsw`, we now print it out.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   print(bns_nsw)
 ```
 
@@ -235,24 +240,24 @@ The output list contains:
 
 We now look at bounds on the average treatment effect on the treated (ATT). 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   bns_nsw_att <- attbounds(Y, D, X, rps)
   summary(bns_nsw_att)
 ```
 
 We experiment with `Q`.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   summary(attbounds(Y, D, X, rps, Q = 2))
 ```
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   summary(attbounds(Y, D, X, rps, Q = 4))
 ```
 
 We also experiment with `n_hc`.
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
 summary(attbounds(Y, D, X, rps))
 summary(attbounds(Y, D, X, rps, n_hc = ceiling(length(Y)/5)))
 summary(attbounds(Y, D, X, rps, n_hc = ceiling(length(Y)/20)))
@@ -265,7 +270,7 @@ Bound estimates cross (that is, the lower bound is larger than the upper bound) 
 The Dehejia-Wahba sample can be regarded as a data scenario where the propensity score is known and satisfies the overlap condition. We now turn to a different data scenario where it is likely that the propensity score is unknown and may not satisfy the overlap condition. 
 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   psid2_control <- read.table("http://users.nber.org/~rdehejia/data/psid2_controls.txt")
   colnames(psid2_control) <- c("treat","age","edu","black","hispanic",
                            "married","nodegree","RE74","RE75","RE78")
@@ -279,7 +284,7 @@ The Dehejia-Wahba sample can be regarded as a data scenario where the propensity
 
 Here, we use one of non-experimental comparison groups constructed by LaLonde from the Population Survey of Income Dynamics, namely PSID2 controls. We now estimate the reference propensity score using the sample proportion and obtain the new bound estimates:
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   rps_sp <- rep(mean(D),length(D))  
   bns_psid <- atebounds(Y, D, X, rps_sp)
   summary(bns_psid)
@@ -289,7 +294,7 @@ The confidence interval $[-0.35,0.31]$ here is much larger than the confidence i
 
 We now consider the Manski bounds, which can be obtained by setting $Q = 1$. 
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   summary(atebounds(Y, D, X, rps_sp, Q=1))
 ```
 
@@ -297,7 +302,7 @@ We can see that the Manski bounds are even larger and the same regardless of the
 
 Finally, we obtain the bounds for the average treatment effect on the treated (ATT).
 
-```{r}
+```{r, eval=FALSE, purl=FALSE}
   summary(attbounds(Y, D, X, rps_sp))
   detach(psid)
 ```
@@ -306,6 +311,10 @@ We find that the bounds on ATT are wide, as in ATE.
 
 
 # Case Study 2: Bounding the Effect of Right Heart Catheterization 
+
+```{r packaged-data-eval-options, include=FALSE, eval=TRUE, purl=TRUE}
+knitr::opts_chunk$set(eval = TRUE, purl = TRUE)
+```
 
 As a second empirical example, we revisit the well-known Right Heart Catheterization Dataset. 
 In particular, we apply our methods to @Connors1996's study of the
@@ -443,8 +452,8 @@ We show empirical results using the default option.
 to check sensitivity with respect to tuning parameters, we vary $L$ and $Q$. 
 
 ```{r, eval=FALSE}
-  # Bounding  ATT: sensitivity analysis
-  # not run to save time
+  # Bounding ATT: sensitivity analysis
+  # This chunk is not evaluated by default because the analysis is time-intensive.
   nhc_set <- c(5, 10, 20)
   results_att <- {}
 
@@ -598,4 +607,3 @@ In this example, the reference propensity score is close to 0.5, thus implying t
 Overall, the empirical results suggest that there is no significant effect of EFM on cesarean section rates.
 
 ## References
-

@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -7,121 +7,11 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 library(ATbounds)
 
-## -----------------------------------------------------------------------------
-  nsw_treated <- read.table("http://users.nber.org/~rdehejia/data/nsw_treated.txt")
-  colnames(nsw_treated) <- c("treat","age","edu","black","hispanic",
-                           "married","nodegree","RE75","RE78")
+## ----nsw-eval-options, include=FALSE------------------------------------------
+knitr::opts_chunk$set(eval = FALSE, purl = FALSE)
 
-  nsw_control <- read.table("http://users.nber.org/~rdehejia/data/nsw_control.txt")
-  colnames(nsw_control) <- c("treat","age","edu","black","hispanic",
-                           "married","nodegree","RE75","RE78")
-
-
-## -----------------------------------------------------------------------------
-  nsw <- rbind(nsw_treated,nsw_control)
-  attach(nsw)
-  D <- treat  
-  Y <- (RE78 > 0) 
-
-## -----------------------------------------------------------------------------
-  rps <- rep(mean(D),length(D))  
-
-## -----------------------------------------------------------------------------
-  ate_nsw <- mean(D*Y)/mean(D)-mean((1-D)*Y)/mean(1-D)
-  print(ate_nsw)
-
-## -----------------------------------------------------------------------------
-  model <- lm(Y ~ D)
-  summary(model)
-  confint(model)
-
-## -----------------------------------------------------------------------------
-  detach(nsw)
-  nswre_treated <- read.table("http://users.nber.org/~rdehejia/data/nswre74_treated.txt")
-  colnames(nswre_treated) <- c("treat","age","edu","black","hispanic",
-                           "married","nodegree","RE74","RE75","RE78")
-
-  nswre_control <- read.table("http://users.nber.org/~rdehejia/data/nswre74_control.txt")
-  colnames(nswre_control) <- c("treat","age","edu","black","hispanic",
-                           "married","nodegree","RE74","RE75","RE78")
-  nswre <- rbind(nswre_treated,nswre_control)
-  attach(nswre)
-  D <- treat  
-  Y <- (RE78 > 0) 
-  X <- cbind(age,edu,black,hispanic,married,nodegree,RE74/1000,RE75/1000)
-
-## -----------------------------------------------------------------------------
-  rps <- rep(mean(D),length(D))  
-
-## -----------------------------------------------------------------------------
-  ate_nswre <- mean(D*Y)/mean(D)-mean((1-D)*Y)/mean(1-D)
-  print(ate_nswre)
-
-## -----------------------------------------------------------------------------
-  model <- lm(Y ~ D)
-  summary(model)
-  confint(model)
-
-## -----------------------------------------------------------------------------
-  bns_nsw <- atebounds(Y, D, X, rps)
-
-## -----------------------------------------------------------------------------
-  summary(bns_nsw)
-
-## -----------------------------------------------------------------------------
-summary(atebounds(Y, D, X, rps, Q = 2))
-
-## -----------------------------------------------------------------------------
-summary(atebounds(Y, D, X, rps, Q = 4))
-
-## -----------------------------------------------------------------------------
-print(ate_nswre)
-
-## -----------------------------------------------------------------------------
-summary(atebounds(Y, D, X, rps))
-summary(atebounds(Y, D, X, rps, n_hc = ceiling(length(Y)/5)))
-summary(atebounds(Y, D, X, rps, n_hc = ceiling(length(Y)/20)))
-
-## -----------------------------------------------------------------------------
-  print(bns_nsw)
-
-## -----------------------------------------------------------------------------
-  bns_nsw_att <- attbounds(Y, D, X, rps)
-  summary(bns_nsw_att)
-
-## -----------------------------------------------------------------------------
-  summary(attbounds(Y, D, X, rps, Q = 2))
-
-## -----------------------------------------------------------------------------
-  summary(attbounds(Y, D, X, rps, Q = 4))
-
-## -----------------------------------------------------------------------------
-summary(attbounds(Y, D, X, rps))
-summary(attbounds(Y, D, X, rps, n_hc = ceiling(length(Y)/5)))
-summary(attbounds(Y, D, X, rps, n_hc = ceiling(length(Y)/20)))
-
-## -----------------------------------------------------------------------------
-  psid2_control <- read.table("http://users.nber.org/~rdehejia/data/psid2_controls.txt")
-  colnames(psid2_control) <- c("treat","age","edu","black","hispanic",
-                           "married","nodegree","RE74","RE75","RE78")
-  psid <- rbind(nswre_treated,psid2_control)
-  detach(nswre)
-  attach(psid)
-  D <- treat  
-  Y <- (RE78 > 0) 
-  X <- cbind(age,edu,black,hispanic,married,nodegree,RE74/1000,RE75/1000)
-
-## -----------------------------------------------------------------------------
-  rps_sp <- rep(mean(D),length(D))  
-  bns_psid <- atebounds(Y, D, X, rps_sp)
-  summary(bns_psid)
-
-## -----------------------------------------------------------------------------
-  summary(atebounds(Y, D, X, rps_sp, Q=1))
-
-## -----------------------------------------------------------------------------
-  summary(attbounds(Y, D, X, rps_sp))
-  detach(psid)
+## ----packaged-data-eval-options, include=FALSE, eval=TRUE, purl=TRUE----------
+knitr::opts_chunk$set(eval = TRUE, purl = TRUE)
 
 ## -----------------------------------------------------------------------------
   Y <- RHC[,"survival"]
@@ -168,22 +58,22 @@ summary(attbounds(Y, D, X, rps, n_hc = ceiling(length(Y)/20)))
 ## -----------------------------------------------------------------------------
   summary(attbounds(Y, D, X, rps))
 
-## ---- eval=FALSE--------------------------------------------------------------
-#    # Bounding  ATT: sensitivity analysis
-#    # not run to save time
-#    nhc_set <- c(5, 10, 20)
-#    results_att <- {}
-#  
-#    for (hc in nhc_set){
-#      nhc <- ceiling(length(Y)/hc)
-#  
-#      for (q in c(1,2,3,4)){
-#        res <- attbounds(Y, D, X, rps, Q = q, n_hc = nhc)
-#        results_att <- rbind(results_att,c(hc,q,res$est_lb,res$est_ub,res$ci_lb,res$ci_ub))
-#      }
-#    }
-#    colnames(results_att) = c("L","Q","LB","UB","CI-LB","CI-UB")
-#    print(results_att, digits = 3)
+## ----eval=FALSE---------------------------------------------------------------
+#   # Bounding ATT: sensitivity analysis
+#   # This chunk is not evaluated by default because the analysis is time-intensive.
+#   nhc_set <- c(5, 10, 20)
+#   results_att <- {}
+# 
+#   for (hc in nhc_set){
+#     nhc <- ceiling(length(Y)/hc)
+# 
+#     for (q in c(1,2,3,4)){
+#       res <- attbounds(Y, D, X, rps, Q = q, n_hc = nhc)
+#       results_att <- rbind(results_att,c(hc,q,res$est_lb,res$est_ub,res$ci_lb,res$ci_ub))
+#     }
+#   }
+#   colnames(results_att) = c("L","Q","LB","UB","CI-LB","CI-UB")
+#   print(results_att, digits = 3)
 
 ## -----------------------------------------------------------------------------
   summary(atebounds(Y, D, X, rps, Q = 1))

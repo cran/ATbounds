@@ -18,7 +18,7 @@
 #'   results_ate <- atebounds(Y, D, X, rps, Q = 3)
 #'   summary(results_ate)
 #'
-#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 #'
 #' @export
 summary.ATbounds <- function(object,...){

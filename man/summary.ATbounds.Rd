@@ -30,5 +30,5 @@ Produce a summary for an ATbounds object.
 
 }
 \references{
-Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 }

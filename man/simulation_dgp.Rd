@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulation_dgp.R
 \name{simulation_dgp}
 \alias{simulation_dgp}
-\title{Simulating observations from the data-generating process considered in Lee and Weidner (2021)}
+\title{Simulating observations from the data-generating process considered in Lee and Weidner}
 \usage{
 simulation_dgp(n, ps_spec = "overlap", x_discrete = FALSE)
 }
@@ -11,8 +11,8 @@ simulation_dgp(n, ps_spec = "overlap", x_discrete = FALSE)
 
 \item{ps_spec}{specification of the propensity score: "overlap" or "non-overlap" (default: "overlap")}
 
-\item{x_discrete}{TRUE if the distribution of the covariate is uniform on {-3.0, -2.9, ..., 3.0} and
-FALSE if the distribution of the covariate is uniform on [--3,3] (default: FALSE)}
+\item{x_discrete}{TRUE if the distribution of the covariate is uniform on the grid -3.0, -2.9, ..., 3.0 and
+FALSE if the distribution of the covariate is uniform on [-3,3] (default: FALSE)}
 }
 \value{
 An S3 object of type "ATbounds". The object has the following elements.
@@ -20,10 +20,10 @@ An S3 object of type "ATbounds". The object has the following elements.
 \item{treat}{n observations of binary treatments}
 \item{covariate}{n observations of a scalar covariate}
 \item{ate_oracle}{the sample analog of E[Y(1) - Y(0)]}
-\item{att_oracle}{the sample analog of E[D{Y(1) - Y(0)}|D=1]}
+\item{att_oracle}{the sample analog of E[D * (Y(1) - Y(0)) | D = 1]}
 }
 \description{
-Simulates observations from the data-generating process considered in Lee and Weidner (2021)
+Simulates observations from the data-generating process considered in Lee and Weidner
 }
 \examples{
   data <- simulation_dgp(100, ps_spec = "overlap")
@@ -35,5 +35,5 @@ Simulates observations from the data-generating process considered in Lee and We
 
 }
 \references{
-Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 }

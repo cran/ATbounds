@@ -32,7 +32,7 @@
 #'   rps <- rep(mean(D),length(D))
 #'   results_att <- attbounds(Y, D, X, rps, Q = 3)
 #'
-#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 #'
 #' @export
 attbounds <- function(Y, D, X, rps, Q = 3L, studentize = TRUE, alpha = 0.05, x_discrete = FALSE, n_hc = NULL){
@@ -75,7 +75,7 @@ attbounds <- function(Y, D, X, rps, Q = 3L, studentize = TRUE, alpha = 0.05, x_d
   
   res <- matrix(NA,nrow=mx,ncol=2)
       
-  for (i in 1:mx){ # this loop may not be fast if mx is very large
+  for (i in 1:mx){ # loop over support points
     
       disc_ind <- (ind_Xunique == i) 
       nx <- sum(disc_ind)    # number of obs. such that X_i = x for each row of x
@@ -176,4 +176,3 @@ attbounds <- function(Y, D, X, rps, Q = 3L, studentize = TRUE, alpha = 0.05, x_d
 
   outputs
 }
-

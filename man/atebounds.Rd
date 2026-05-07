@@ -65,5 +65,5 @@ Bounds the average treatment effect (ATE) under the unconfoundedness assumption 
 
 }
 \references{
-Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 }

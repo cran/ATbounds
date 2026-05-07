@@ -1,18 +1,18 @@
-#' @title Simulating observations from the data-generating process considered in Lee and Weidner (2021)
+#' @title Simulating observations from the data-generating process considered in Lee and Weidner
 #'
-#' @description Simulates observations from the data-generating process considered in Lee and Weidner (2021)
+#' @description Simulates observations from the data-generating process considered in Lee and Weidner
 #'
 #' @param n sample size
 #' @param ps_spec specification of the propensity score: "overlap" or "non-overlap" (default: "overlap")
-#' @param x_discrete TRUE if the distribution of the covariate is uniform on {-3.0, -2.9, ..., 3.0} and
-#'  FALSE if the distribution of the covariate is uniform on [--3,3] (default: FALSE)
+#' @param x_discrete TRUE if the distribution of the covariate is uniform on the grid -3.0, -2.9, ..., 3.0 and
+#'  FALSE if the distribution of the covariate is uniform on [-3,3] (default: FALSE)
 #' 
 #' @return An S3 object of type "ATbounds". The object has the following elements.
 #' \item{outcome}{n observations of binary outcomes}
 #' \item{treat}{n observations of binary treatments}
 #' \item{covariate}{n observations of a scalar covariate}
 #' \item{ate_oracle}{the sample analog of E[Y(1) - Y(0)]}
-#' \item{att_oracle}{the sample analog of E[D{Y(1) - Y(0)}|D=1]}
+#' \item{att_oracle}{the sample analog of E[D * (Y(1) - Y(0)) | D = 1]}
 #' 
 #' @examples
 #'   data <- simulation_dgp(100, ps_spec = "overlap")
@@ -22,7 +22,7 @@
 #'   ate <- data$ate_oracle
 #'   att <- data$att_oracle
 #'
-#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations.
+#' @references Sokbae Lee and Martin Weidner. Bounding Treatment Effects by Pooling Limited Information across Observations. Forthcoming at the Journal of Econometrics.
 #'
 #' @export
 simulation_dgp <- function(n, ps_spec = "overlap", x_discrete = FALSE){
